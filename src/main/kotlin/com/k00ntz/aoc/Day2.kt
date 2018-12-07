@@ -3,12 +3,12 @@ package com.k00ntz.aoc
 import com.k00ntz.aoc.utils.cartesian
 import com.k00ntz.aoc.utils.parseFile
 
-val fileName = "2-2018.txt"
+val day2FileName = "2-2018.txt"
 
 fun main(args: Array<String>) {
     val parsefn = { i: String -> i }
-    println("Day1 part 1: ${day2(parseFile(fileName = fileName, parsefn = parsefn))}")
-    println("Day1 part 2: ${day2part2(parseFile(fileName = fileName, parsefn = parsefn))}")
+    println("Day1 part 1: ${day2(parseFile(fileName = day2FileName, parsefn = parsefn))}")
+    println("Day1 part 2: ${day2part2(parseFile(fileName = day2FileName, parsefn = parsefn))}")
 }
 
 fun day2part2(parseFile: List<String>): String {

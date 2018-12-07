@@ -1,6 +1,6 @@
 package com.k00ntz.aoc
 
-import com.k00ntz.aoc.utils.Ring
+//import com.k00ntz.aoc.utils.Ring
 import com.k00ntz.aoc.utils.parseFile
 
 val FILE_NAME = "1-2018.txt"
@@ -9,7 +9,8 @@ fun day1(freqs: List<Long>): Long =
     freqs.fold(0L) { a, c -> a + c }
 
 fun day1part2(freqs: List<Long>): Long? {
-    val ring = Ring(freqs)
+//    val ring = Ring(freqs)
+    val ring = freqs
     var pair = Pair(0L, setOf(0L))
     for (l in ring){
         val pair2 = op(pair, l)
