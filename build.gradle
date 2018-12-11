@@ -13,6 +13,7 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile 'com.google.guava:guava:27.0.1-jre'
     testCompile "junit:junit:4.12"
 }
 

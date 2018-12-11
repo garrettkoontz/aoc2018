@@ -6,9 +6,6 @@ val day3FileName = "3-2018.txt"
 
 data class Claim(val id: Int, val leftEdge: Int, val topEdge: Int, val width: Int, val height: Int)
 
-//val cloth: Array<Array<MutableSet<Int>>> =
-//    (0..1000).map { (0..1000).map { mutableSetOf<Int>() }.toTypedArray() }.toTypedArray()
-
 val regex = "#([0-9]+) @ ([0-9]+),([0-9]+): ([0-9]+)x([0-9]+)".toRegex()
 val day3ParseFn = { s: String ->
     regex.matchEntire(s)?.destructured?.let { (id, leftEdge, topEdge, width, height) ->
