@@ -1,15 +1,14 @@
 package com.k00ntz.aoc
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 class Day9KtTest {
 
     @Test
     fun day9Test() {
         val scores = Board(9, 25).play()
-        assertEquals(32, scores.max())
+        assertEquals(32L, scores.max())
     }
 
     @Test
@@ -20,11 +19,11 @@ class Day9KtTest {
 
     @Test
     fun day9() {
-        assertEquals(8317, Board(10, 1618).play().max())
-        assertEquals(146373, Board(13, 7999).play().max())
-        assertEquals(2764, Board(17, 1104).play().max())
-        assertEquals(54718, Board(21, 6111).play().max())
-        assertEquals(37305, Board(30, 5807).play().max())
+        assertEquals(8317L, Board(10, 1618).play().max())
+        assertEquals(146373L, Board(13, 7999).play().max())
+        assertEquals(2764L, Board(17, 1104).play().max())
+        assertEquals(54718L, Board(21, 6111).play().max())
+        assertEquals(37305L, Board(30, 5807).play().max())
     }
 
 
