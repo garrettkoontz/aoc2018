@@ -1,16 +1,24 @@
 package com.k00ntz.aoc.utils
 
-class LinkedNode<T>(val value: T, var prevNode: LinkedNode<T>?, var nextNode: LinkedNode<T>?) {
+class LinkedNode<T>(val value: T) {
+
+    var prevNode: LinkedNode<T> = this
+    var nextNode: LinkedNode<T> = this
+
+    constructor(value: T, prevNode: LinkedNode<T>, nextNode: LinkedNode<T>) : this(value) {
+        this.nextNode = nextNode
+        this.prevNode = prevNode
+    }
 
     fun nodeAt(distance: Int): LinkedNode<T> {
         return when {
-            distance == 1 -> nextNode!!
-            distance == -1 -> prevNode!!
+            distance == 1 -> nextNode
+            distance == -1 -> prevNode
             distance < 0 -> {
-                (0 until Math.abs(distance)).fold(this) { acc, _ -> acc.prevNode!! }
+                (0 until Math.abs(distance)).fold(this) { acc, _ -> acc.prevNode }
             }
             distance > 0 -> {
-                (0 until distance).fold(this) { acc, _ -> acc.nextNode!! }
+                (0 until distance).fold(this) { acc, _ -> acc.nextNode }
             }
             else -> this
         }
@@ -18,14 +26,14 @@ class LinkedNode<T>(val value: T, var prevNode: LinkedNode<T>?, var nextNode: Li
 
     fun removeAt(distance: Int): Pair<LinkedNode<T>, LinkedNode<T>> {
         val removedNode = nodeAt(distance)
-        removedNode.prevNode!!.nextNode = removedNode.nextNode
-        removedNode.nextNode!!.prevNode = removedNode.prevNode
-        return Pair(removedNode, removedNode.nextNode!!)
+        removedNode.prevNode.nextNode = removedNode.nextNode
+        removedNode.nextNode.prevNode = removedNode.prevNode
+        return Pair(removedNode, removedNode.nextNode)
     }
 
     fun add(i: T): LinkedNode<T> {
-        val ln = LinkedNode(i, this, this.nextNode)
-        this.nextNode!!.prevNode = ln
+        val ln = LinkedNode(i)
+        this.nextNode.prevNode = ln
         this.nextNode = ln
         return ln
     }
@@ -34,7 +42,7 @@ class LinkedNode<T>(val value: T, var prevNode: LinkedNode<T>?, var nextNode: Li
         var node = this
         val lst = mutableListOf(this.value)
         while (node.nextNode != this) {
-            node = node.nextNode!!
+            node = node.nextNode
             lst.add(node.value)
         }
         return lst

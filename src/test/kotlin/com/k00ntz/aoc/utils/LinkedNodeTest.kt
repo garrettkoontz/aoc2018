@@ -7,9 +7,7 @@ class LinkedNodeTest {
 
     @Test
     fun nodeAt() {
-        val nd = LinkedNode(0, null, null)
-        nd.prevNode = nd
-        nd.nextNode = nd
+        val nd = LinkedNode(0)
         val nd1 = nd.add(1)
         val nd2 = nd1.add(2)
         val nd3 = nd2.add(3)
@@ -23,9 +21,7 @@ class LinkedNodeTest {
 
     @Test
     fun removeAt() {
-        val nd = LinkedNode(0, null, null)
-        nd.prevNode = nd
-        nd.nextNode = nd
+        val nd = LinkedNode(0)
         val nd1 = nd.add(1)
         val nd2 = nd1.add(2)
         val nd3 = nd2.add(3)

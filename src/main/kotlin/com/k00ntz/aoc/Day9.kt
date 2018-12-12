@@ -2,6 +2,7 @@ package com.k00ntz.aoc
 
 import com.k00ntz.aoc.utils.LinkedNode
 import com.k00ntz.aoc.utils.parseLine
+import kotlin.system.measureTimeMillis
 
 val day9FileName = "9-2018.txt"
 
@@ -14,8 +15,15 @@ val day9ParseFn = { s: String ->
 
 
 fun main(args: Array<String>) {
-    println(day9(parseLine(day9FileName, day9ParseFn)))
-    println(day9part2(parseLine(day9FileName, day9ParseFn)))
+    println(
+        measureTimeMillis {
+            println(day9(parseLine(day9FileName, day9ParseFn)))
+        })
+
+    println(
+        measureTimeMillis {
+            println(day9part2(parseLine(day9FileName, day9ParseFn)))
+        })
 }
 
 fun day9part2(input: Pair<Int, Int>): Long {
@@ -37,9 +45,7 @@ class Board(
 
     fun play(): Array<Long> {
         val scores: Array<Long> = (1..numPlayers).map { 0L }.toTypedArray()
-        val firstNode: LinkedNode<Int> = LinkedNode<Int>(0, null, null)
-        firstNode.nextNode = firstNode
-        firstNode.prevNode = firstNode
+        val firstNode: LinkedNode<Int> = LinkedNode(0)
         val board = firstNode
         val boardSize = 1
         val scoresList = (1..limit).fold(Triple(board, boardSize, emptyList<Int>())) { acc, i ->
