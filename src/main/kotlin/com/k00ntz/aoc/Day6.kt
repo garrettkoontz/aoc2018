@@ -12,7 +12,7 @@ val day6ParseFn = { s: String ->
 }
 
 fun main(args: Array<String>) {
-//    println(day6(parseFile(day6FileName, day6ParseFn)))
+    println(day6(parseFile(day6FileName, day6ParseFn)))
     println(day6part2(parseFile(day6FileName, day6ParseFn), 10000))
 }
 
@@ -35,21 +35,25 @@ fun distanceTo(pt: Point, otherPt: Point): Int =
     abs(pt.x() - otherPt.x()) + abs(pt.y() - otherPt.y())
 
 
-fun day6(points: List<Point>): Any? {
-//    val infinites = convexHull(points)
-//    println(infinites)
-//    println("x: $minX-$maxX, y: $minY-$maxY")
-//    val grid: Map<Point, Int?> = cartesian((minX..maxX).toList(), (minY..maxY).toList()).pmap { pt: Point ->
-//        Pair(pt, nearestPointIndex(pt, points))
-//    }.toMap()
-//    val counts = grid.map { Pair(it.key, it.value) }.groupBy { it.second }
-//    val removes = infinites.map { points.indexOf(it) }
-//    val valids = counts.filter { !removes.contains(it.key) }.mapValues { it.value.size }
-//    return valids.maxBy { it.value }!!.value
-    return buildFromPoints(points)
+@Deprecated("did another way, this was too slow")
+fun day6Old(points: List<Point>): Int{
+        val infinites = convexHull(points)
+    val maxX: Int = points.maxBy { it.first }!!.first
+    val minX: Int = points.minBy { it.first }!!.first
+    val maxY: Int = points.maxBy { it.second }!!.second
+    val minY: Int = points.minBy { it.second }!!.second
+    val grid: Map<Point, Int?> = cartesian((minX..maxX).toList(), (minY..maxY).toList()).pmap { pt: Point ->
+        Pair(pt, nearestPointIndex(pt, points))
+    }.toMap()
+    val counts = grid.map { Pair(it.key, it.value) }.groupBy { it.second }
+    val removes = infinites.map { points.indexOf(it) }
+    val valids = counts.filter { !removes.contains(it.key) }.mapValues { it.value.size }
+    return valids.maxBy { it.value }!!.value
 }
 
-//build out from points
+fun day6(points: List<Point>): Int {
+    return buildFromPoints(points)
+}
 
 fun buildFromPoints(
     pts: List<Point>,
@@ -92,11 +96,13 @@ fun removeConflicts(
         , dupes.keys)
 }
 
+@Deprecated("did another way")
 fun nearestPointIndex(pt: Point, pts: List<Point>): Int? {
     return if (pts.contains(pt)) pts.indexOf(pt)
     else findNeighborIndex(pt, pts)
 }
 
+@Deprecated("did another way")
 fun findNeighborIndex(pt: Point, pts: List<Point>): Int? {
     var nextPoints = manhattanPoints(pt)
     while (true) {

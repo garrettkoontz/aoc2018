@@ -10,6 +10,11 @@ inline fun <T : Any> parseFile(fileName: String, crossinline parsefn: (String) -
         it.bufferedReader().lines().map { parsefn(it) }.toList()
     }
 
+inline fun <T: Any> parseLine(fileName: String, crossinline parsefn: (String) -> T): T =
+    ClassLoader.getSystemResourceAsStream(fileName).use {
+        it.bufferedReader().lines().map { parsefn(it) }.findFirst()
+    }.get()
+
 //fun <T> cartesian(c1: Collection<T>, c2: Collection<T> = c1): List<Pair<T, T>> =
 //    c1.flatMap { a -> c2.map { b -> Pair(a, b) } }
 

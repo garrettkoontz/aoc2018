@@ -16,6 +16,12 @@ class Day8KtTest {
     @Test
     fun day8() {
         val ints = listOf(2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2)
-        assertEquals(128, day8(ints))
+        assertEquals(138, day8(ints))
+    }
+
+    @Test
+    fun day8part2() {
+        val ints = listOf(2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2)
+        assertEquals(66, day8part2(ints))
     }
 }
