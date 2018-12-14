@@ -3,6 +3,7 @@ package com.k00ntz.aoc.utils
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import java.util.*
+import kotlin.math.sqrt
 import kotlin.streams.toList
 
 inline fun <T : Any> parseFile(fileName: String, crossinline parsefn: (String) -> T): List<T> =
@@ -26,6 +27,11 @@ typealias Point = Pair<Int, Int>
 operator fun Point.plus(other: Point): Point =
     Pair(this.first + other.first, this.second + other.second)
 
+fun Point.distanceTo(point: Point): Double {
+    val xDiff = (this.x() - point.x()).toDouble()
+    val yDiff = (this.y() - point.y()).toDouble()
+    return sqrt(xDiff * xDiff + yDiff * yDiff)
+}
 
 fun Point.x(): Int =
     this.first
@@ -63,6 +69,16 @@ fun convexHull(pts: List<Point>): List<Point> {
 
 fun <A, B> Iterable<A>.pmap(f: suspend (A) -> B): List<B> = runBlocking {
     map { async { f(it) } }.map { it.await() }
+}
+
+fun <A, B> Iterator<A>.pmap(f: suspend (A) -> B): List<B> {
+    val sup = this
+    return object : Iterable<A> {
+        override fun iterator(): Iterator<A> {
+            return sup
+        }
+
+    }.pmap(f)
 }
 
 private fun <T> Array<T>.pmap(f: suspend (T) -> Unit) = runBlocking {

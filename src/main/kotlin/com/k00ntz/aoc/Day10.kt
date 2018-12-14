@@ -1,9 +1,9 @@
 package com.k00ntz.aoc
 
-import com.k00ntz.aoc.utils.Grid
-import com.k00ntz.aoc.utils.Particle
-import com.k00ntz.aoc.utils.parseFile
-import com.k00ntz.aoc.utils.toGrid
+import com.k00ntz.aoc.utils.*
+import java.lang.Math.max
+import java.lang.Math.min
+import kotlin.system.measureTimeMillis
 
 val day10FileName = "10-2018.txt"
 
@@ -23,31 +23,65 @@ val day10ParseFn = { s: String ->
 
 fun main(args: Array<String>) {
     println(day10(parseFile(day10FileName, day10ParseFn)))
+    println(day10part2(parseFile(day10FileName, day10ParseFn)))
+}
+
+fun day10part2(particles: List<Particle>): Int {
+    var particles1 = particles
+    var area1 = area(particles1)
+    var particles2 = particles.map { it.move() }
+    var i = 1
+    var area2 = area(particles2)
+    while (area1 > area2) {
+        particles1 = particles2
+        area1 = area2
+        particles2 = particles1.map { it.move() }
+        i++
+        area2 = area(particles2)
+    }
+    return i -1
+
 }
 
 fun day10(particles: List<Particle>): String {
     var particles1 = particles
-    while (!saysSomething(particles1.toGrid())) {
-        particles1 = particles1.map { it.move() }
+    var area1 = area(particles1)
+    var particles2 = particles.map { it.move() }
+    var area2 = area(particles2)
+    while (area1 > area2) {
+        particles1 = particles2
+        area1 = area2
+        particles2 = particles1.map { it.move() }
+        area2 = area(particles2)
     }
-    return particles1.toGrid().toString()
+    return Grid(particles1).toString()
+
 }
 
-val textsize = 3
+private fun area(stars: List<Particle>) = stars
+    .fold(listOf(Int.MAX_VALUE, Int.MAX_VALUE, Int.MIN_VALUE, Int.MIN_VALUE)) { (minX, minY, maxX, maxY), s ->
+        listOf(min(minX, s.x), min(minY, s.y), max(maxX, s.x), max(maxY, s.y))
+    }
+    .let { (minX, minY, maxX, maxY) -> (maxX - minX).toLong() * (maxY - minY).toLong() }
+
+fun day10old(particles: List<Particle>): String {
+    var grid = Grid(particles)
+    var i = 0
+    while (!saysSomething(grid)) {
+        grid = grid.tick()
+        i++
+        if (i % 1000 == 0) println("done $i ticks")
+    }
+    return grid.toString()
+}
+
+val textsize = 7
 
 fun saysSomething(grid: Grid): Boolean {
-    println(grid)
-    return grid.grid.fold(false) { acc, chars -> acc || chars.containsRunGreaterThan(textsize, grid.pointChar) }
+//    println(grid)
+//    println()
+    return grid.containsRunGreaterThan(textsize)
 }
 
-private fun Array<Char>.containsRunGreaterThan(textsize: Int, char: Char): Boolean {
-    if (this.contains('#')) {
-        for (it in (0 until this.size - textsize)) {
-            val slice = this.slice(it..it + textsize)
-            if (setOf(char).containsAll(slice.toSet()))
-                return true
-        }
-    }
-    return false
-}
+
 

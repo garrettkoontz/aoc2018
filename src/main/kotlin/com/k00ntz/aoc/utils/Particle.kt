@@ -1,7 +1,5 @@
 package com.k00ntz.aoc.utils
 
-import java.util.*
-import kotlin.math.abs
 import kotlin.math.sqrt
 
 
@@ -15,89 +13,69 @@ data class Particle(
     }
 
     fun distanceTo(particle: Particle): Double {
-        val xDiff = (this.position.x() - particle.position.x()).toDouble()
-        val yDiff = (this.position.y() - particle.position.y()).toDouble()
-        return sqrt(xDiff * xDiff + yDiff * yDiff)
+        return position.distanceTo(particle.position)
     }
+
+    val x = position.x()
+
+    val y = position.y()
 
 }
 
 
-class Grid(
-    val origin: Point,
-    // grid is a x by y array of arrays of Char
-    val grid: Array<Array<Particle?>>,
-    val pointChar: Char,
-    val notPointChar: Char
-) {
-    private val maxY: Int = grid.first().size
-    private val maxX: Int = grid.size
+class Grid(val grid: Map<Int, List<Particle>>) {
 
-    private fun isScaledPointOutOfBoundary(pt: Point): Boolean {
-        return abs(pt.x()) > maxX || abs(pt.y()) > maxY
-    }
+    constructor(particles: List<Particle>) : this(particles.groupBy { it.x }
+        .mapValues {
+            it.value.sortedWith(Comparator { o1, o2 ->
+                o1.y.compareTo(o2.y)
+            })
+        })
 
-    private fun scaleParticle(pt: Particle): Point = origin + pt.position
+    fun tick(): Grid =
+        Grid(grid.values.flatMap {
+            it.pmap { it.move() }
+        })
 
-    fun addParticle(pt: Particle) {
-        val inGridPoint = scaleParticle(pt)
-        if (isScaledPointOutOfBoundary(inGridPoint)) {
-            throw RuntimeException("Unable to add out of bounds point: $pt")
-        } else {
-            grid[inGridPoint.x()][inGridPoint.y()] = pt
-        }
-    }
 
-    fun removeParticle(pt: Particle) {
-        val inGridPoint = scaleParticle(pt)
-        if (isScaledPointOutOfBoundary(inGridPoint)) {
-            throw RuntimeException("Unable to add out of bounds point: $pt")
-        } else {
-            grid[inGridPoint.x()][inGridPoint.y()] = null
-        }
-    }
+    // grid is a y indexed map to particles
 
-    fun transform(): Grid {
-        grid.pmap {}
-    }
+    val pointChar: Char = '#'
+    val notPointChar: Char = '.'
 
-    private fun transpose(): List<List<Char>> {
-        val ret = ArrayList<List<Char>>()
-        val N = grid[0].size
-        for (i in 0 until N) {
-            val col = ArrayList<Char>()
-            for (row in grid) {
-                col.add(if (row[i] != null) pointChar else notPointChar)
+
+    fun containsRunGreaterThan(textsize: Int): Boolean {
+        return grid.values
+            .parallelStream()
+            .filter { it.size >= textsize }.anyMatch { pm ->
+                (0..pm.size - textsize).any {
+                    val slice = pm.subList(it, it + textsize)
+                    slice.zipWithNext().all { (p1, p2) ->
+                        p1.y == p2.y - 1
+                    }
+                }
             }
-            ret.add(col)
-        }
-        return ret
     }
 
     override fun toString(): String {
-        return this.transpose().map { it.map { it.toString() }.joinToString(separator = " ") }
-            .joinToString(separator = "\n")
+        val maxY: Int = grid.keys.max()!!
+        val maxX: Int = grid.map { it.value }.flatten().maxBy { it.position.x() }!!.position.x()
+        val origin = Point(maxX, maxY)
+        fun scaleParticle(pt: Particle): Point = origin + pt.position
+        val arrays = (-maxY..maxY).map { (-maxX..maxX).map { notPointChar }.toTypedArray() }.toTypedArray()
+        grid.forEach {
+            it.value.pmap {
+                val pos = scaleParticle(it)
+                arrays[pos.y()][pos.x()] = pointChar
+            }
+        }
+        return "0".padStart(6 + (maxX * 2), ' ') + "\n" +
+                arrays.mapIndexed { index, chars ->
+                    chars.joinToString(
+                        separator = " ",
+                        prefix = "${(index - maxY)}".padEnd(5, ' ')
+                    )
+                }
+                    .joinToString(separator = "\n")
     }
-}
-
-private fun <T> Array<T>.pmap(function: () -> Unit) {
-
-}
-
-
-fun List<Particle>.toGrid(
-    pointChar: Char = '#',
-    notPointChar: Char = '.'
-): Grid {
-    val maxX = this.maxBy { abs(it.position.x()) }!!.position.x()
-    val maxY = this.maxBy { abs(it.position.y()) }!!.position.y()
-    val origin = Point(maxX, maxY)
-    val grid = Grid(
-        origin,
-        (-maxX..maxX).map { (-maxY..maxY).map { notPointChar }.toTypedArray() }.toTypedArray(),
-        pointChar,
-        notPointChar
-    )
-    this.forEach { grid.addPoint(it.position) }
-    return grid
 }
