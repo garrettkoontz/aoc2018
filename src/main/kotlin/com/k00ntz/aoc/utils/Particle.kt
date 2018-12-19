@@ -1,7 +1,5 @@
 package com.k00ntz.aoc.utils
 
-import kotlin.math.sqrt
-
 
 data class Particle(
     val position: Point = Pair(0, 0),
@@ -23,7 +21,7 @@ data class Particle(
 }
 
 
-class Grid(val grid: Map<Int, List<Particle>>) {
+class ParticleGrid(val grid: Map<Int, List<Particle>>) {
 
     constructor(particles: List<Particle>) : this(particles.groupBy { it.x }
         .mapValues {
@@ -32,8 +30,8 @@ class Grid(val grid: Map<Int, List<Particle>>) {
             })
         })
 
-    fun tick(): Grid =
-        Grid(grid.values.flatMap {
+    fun tick(): ParticleGrid =
+        ParticleGrid(grid.values.flatMap {
             it.pmap { it.move() }
         })
 

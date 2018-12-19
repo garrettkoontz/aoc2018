@@ -3,7 +3,6 @@ package com.k00ntz.aoc
 import com.k00ntz.aoc.utils.*
 import java.lang.Math.max
 import java.lang.Math.min
-import kotlin.system.measureTimeMillis
 
 val day10FileName = "10-2018.txt"
 
@@ -54,7 +53,7 @@ fun day10(particles: List<Particle>): String {
         particles2 = particles1.map { it.move() }
         area2 = area(particles2)
     }
-    return Grid(particles1).toString()
+    return ParticleGrid(particles1).toString()
 
 }
 
@@ -65,7 +64,7 @@ private fun area(stars: List<Particle>) = stars
     .let { (minX, minY, maxX, maxY) -> (maxX - minX).toLong() * (maxY - minY).toLong() }
 
 fun day10old(particles: List<Particle>): String {
-    var grid = Grid(particles)
+    var grid = ParticleGrid(particles)
     var i = 0
     while (!saysSomething(grid)) {
         grid = grid.tick()
@@ -77,7 +76,7 @@ fun day10old(particles: List<Particle>): String {
 
 val textsize = 7
 
-fun saysSomething(grid: Grid): Boolean {
+fun saysSomething(grid: ParticleGrid): Boolean {
 //    println(grid)
 //    println()
     return grid.containsRunGreaterThan(textsize)

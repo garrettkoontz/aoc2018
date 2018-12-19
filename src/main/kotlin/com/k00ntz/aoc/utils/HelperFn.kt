@@ -84,3 +84,12 @@ fun <A, B> Iterator<A>.pmap(f: suspend (A) -> B): List<B> {
 private fun <T> Array<T>.pmap(f: suspend (T) -> Unit) = runBlocking {
     map { async { f(it) } }.map { it.await() }
 }
+
+fun <A,B> Iterable<A>.pMapIndexed(f: suspend (Int, A) -> B): List<B> = runBlocking {
+    mapIndexed { index, i -> async { f(index, i) }}.map {it.await()}
+}
+
+
+fun <T, R> Array<out T>.pMapIndexed(f: (index: Int, T) -> R): List<R> = runBlocking {
+    mapIndexed { index, i -> async { f(index, i) }}.map {it.await()}
+}
